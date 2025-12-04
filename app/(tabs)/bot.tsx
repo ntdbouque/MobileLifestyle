@@ -41,7 +41,7 @@ export default function BotScreen() {
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "bot",
-        content: "Tôi hiểu rồi! Đây là phản hồi từ AI chatbot. Sắp tới sẽ tích hợp API thực tế.",
+        content: "Tính năng này sẽ được cập nhật sớm nhất trong thời gian tới, xin vui lòng chờ đợi!",
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, botMessage]);
@@ -129,6 +129,9 @@ export default function BotScreen() {
 
         {/* Input */}
         <View style={styles.inputContainer}>
+          <TouchableOpacity style={styles.iconButton}>
+            <MaterialCommunityIcons name="plus" size={24} color="#007AFF" />
+          </TouchableOpacity>
           <TextInput
             style={styles.input}
             placeholder="Nhập tin nhắn..."
@@ -138,6 +141,9 @@ export default function BotScreen() {
             multiline
             editable={!isLoading}
           />
+          <TouchableOpacity style={styles.iconButton}>
+            <MaterialCommunityIcons name="microphone" size={24} color="#007AFF" />
+          </TouchableOpacity>
           <TouchableOpacity
             style={[styles.sendButton, inputMessage.trim() === "" && styles.sendButtonDisabled]}
             onPress={handleSendMessage}
@@ -162,7 +168,7 @@ export default function BotScreen() {
           />
           <View style={styles.sidebar}>
             <View style={styles.sidebarHeader}>
-              <Text style={styles.sidebarTitle}>Chat History</Text>
+              <Text style={styles.sidebarTitle}>Lịch sử trò chuyện</Text>
               <TouchableOpacity onPress={() => setSidebarVisible(false)}>
                 <MaterialCommunityIcons name="close" size={24} color="#333" />
               </TouchableOpacity>
@@ -173,7 +179,7 @@ export default function BotScreen() {
               onPress={() => handleSelectSession("current")}
             >
               <MaterialCommunityIcons name="plus-circle-outline" size={20} color="#007AFF" />
-              <Text style={styles.sessionItemText}>New Chat</Text>
+              <Text style={styles.sessionItemText}>Cuộc trò chuyện mới</Text>
             </TouchableOpacity>
 
             <ScrollView style={styles.sessionsList}>
@@ -216,9 +222,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     paddingTop: 50,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    backgroundColor: "#E3F2FD",
+    borderBottomWidth: 0,
     gap: 12,
   },
   menuButton: {
@@ -227,7 +232,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#333",
     flex: 1,
   },
@@ -239,14 +244,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageListContent: {
-    paddingHorizontal: 12,
-    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   messageContainer: {
     flexDirection: "row",
-    marginVertical: 8,
+    marginVertical: 10,
     alignItems: "flex-end",
-    gap: 8,
+    gap: 10,
   },
   userContainer: {
     justifyContent: "flex-end",
@@ -271,22 +276,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   messageBubble: {
-    maxWidth: "75%",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    maxWidth: "80%",
+    paddingHorizontal: 14,
+    paddingVertical: 11,
     borderRadius: 18,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
   },
   userMessage: {
-    backgroundColor: "#34C759",
+    backgroundColor: "#007AFF",
   },
   botMessage: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#eee",
+    backgroundColor: "#f5f5f5",
+    borderWidth: 0,
   },
   messageText: {
     fontSize: 15,
-    lineHeight: 20,
+    lineHeight: 21,
+    fontWeight: "500",
   },
   userText: {
     color: "#fff",
@@ -296,10 +306,11 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 11,
-    marginTop: 4,
+    marginTop: 3,
+    fontWeight: "400",
   },
   userTimestamp: {
-    color: "rgba(255, 255, 255, 0.7)",
+    color: "rgba(255, 255, 255, 0.8)",
     textAlign: "right",
   },
   botTimestamp: {
@@ -309,42 +320,58 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    paddingVertical: 14,
+    gap: 10,
   },
   loadingText: {
     color: "#007AFF",
     fontSize: 14,
+    fontWeight: "500",
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
-    gap: 8,
+    borderTopWidth: 0,
+    gap: 10,
   },
   input: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 11,
     fontSize: 15,
     color: "#333",
+    maxHeight: 100,
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: "#007AFF",
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#007AFF",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 4,
   },
   sendButtonDisabled: {
     backgroundColor: "#ddd",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
   },
   sidebarOverlay: {
     position: "absolute",
@@ -358,9 +385,9 @@ const styles = StyleSheet.create({
   sidebar: {
     position: "absolute",
     left: 0,
-    top: 50,
+    top: 0,
     bottom: 0,
-    width: 280,
+    width: 265,
     backgroundColor: "#fff",
     zIndex: 101,
     flexDirection: "column",
@@ -371,6 +398,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 16,
+    paddingTop: 50,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },

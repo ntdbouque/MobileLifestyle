@@ -38,6 +38,28 @@ export default function HomeScreen() {
     return "Chào buổi tối";
   };
 
+  const getGreetingColor = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "#FFD700"; // Gold for morning
+    if (hour < 17) return "#FF8C00"; // Dark orange for afternoon
+    return "#9C27B0"; // Purple for evening
+  };
+
+  const getTimeString = () => {
+    return new Date().toLocaleTimeString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const capitalizeName = (name: string) => {
+    if (!name) return "User";
+    return name
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
   const handleFABPress = () => {
     Animated.sequence([
       Animated.timing(fabScaleAnim, {
@@ -77,39 +99,64 @@ export default function HomeScreen() {
       >
         <View style={styles.greetingContainer}>
           <View>
-            <Text style={styles.greeting}>{getGreeting()}, 👋</Text>
-            <Text style={styles.userName}>{user?.name || "User"}</Text>
-            <Text style={styles.date}>
+            <Text style={[styles.greeting, { color: getGreetingColor() }]}>{getGreeting()} 👋</Text>
+            <Text style={styles.userName}>{capitalizeName(user?.name || "User")}</Text>
+            <Text style={styles.dateTime}>
               {new Date().toLocaleDateString("vi-VN", {
                 weekday: "long",
-                day: "numeric",
-                month: "numeric",
-              })}
+              })} • {getTimeString()}
             </Text>
           </View>
           <MaterialCommunityIcons
-            name="hospital-box"
+            name="heart-pulse"
             size={48}
             color="#007AFF"
           />
         </View>
       </Animated.View>
 
-      {/* Health Stats Cards */}
-      <View style={styles.statsContainer}>
-        {HEALTH_STATS.map((stat: any, index: number) => (
-          <View key={index} style={styles.statCard}>
-            <View style={[styles.statIcon, { backgroundColor: stat.color + "20" }]}>
-              <MaterialCommunityIcons
-                name={stat.icon as any}
-                size={28}
-                color={stat.color}
-              />
-            </View>
-            <Text style={styles.statValue}>{stat.value}</Text>
-            <Text style={styles.statLabel}>{stat.label}</Text>
-          </View>
-        ))}
+      {/* Latest Alert/Notification Banner */}
+      <View style={[styles.alertBannerSection, { marginTop: 16 }]}>
+        <Card style={styles.alertBanner}>
+          <Card.Content>
+            {HEALTH_WARNINGS.length > 0 ? (
+              <>
+                <View style={styles.alertHeader}>
+                  <MaterialCommunityIcons
+                    name={HEALTH_WARNINGS[0].icon as any}
+                    size={24}
+                    color={HEALTH_WARNINGS[0].color}
+                  />
+                  <Text style={[styles.alertTitle, { color: HEALTH_WARNINGS[0].color }]}>
+                    {HEALTH_WARNINGS[0].title}
+                  </Text>
+                </View>
+                <Text style={styles.alertTimestamp}>
+                  {new Date().toLocaleDateString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })} {new Date().toLocaleTimeString("vi-VN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Text>
+                <Text style={styles.alertDescription}>
+                  {HEALTH_WARNINGS[0].description}
+                </Text>
+              </>
+            ) : (
+              <View style={styles.noAlertContainer}>
+                <MaterialCommunityIcons
+                  name="check-circle"
+                  size={24}
+                  color="#34C759"
+                />
+                <Text style={styles.noAlertText}>Không có ghi chú quan trọng nào</Text>
+              </View>
+            )}
+          </Card.Content>
+        </Card>
       </View>
 
       {/* Quick Action Section */}
@@ -140,6 +187,13 @@ export default function HomeScreen() {
             </Card>
           </TouchableOpacity>
         ))}
+      </View>
+
+      {/* Footer - University Info */}
+      <View style={styles.footerSection}>
+        <MaterialCommunityIcons name="school" size={24} color="#007AFF" />
+        <Text style={styles.footerText}>Ứng dụng được phát triển bởi</Text>
+        <Text style={styles.universityName}>Trường Đại học Quốc tế Sài Gòn</Text>
       </View>
     </ScrollView>
 
@@ -203,8 +257,6 @@ export default function HomeScreen() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -215,31 +267,46 @@ const styles = StyleSheet.create({
   },
   greetingSection: {
     backgroundColor: "#fff",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 20,
+    borderBottomWidth: 3,
+    borderBottomColor: "#007AFF",
   },
   greetingContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
+    gap: 12,
   },
   greeting: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 24,
+    fontWeight: "700",
     marginBottom: 4,
   },
-  userName: {
-    fontSize: 18,
-    fontWeight: "600",
+  timeDisplay: {
+    fontSize: 13,
+    fontWeight: "500",
     color: "#007AFF",
+    marginBottom: 8,
+  },
+  userName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 2,
   },
   date: {
     fontSize: 12,
-    color: "#999",
+    color: "#666",
+    fontWeight: "400",
     marginTop: 4,
+  },
+  dateTime: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#007AFF",
+    marginTop: 6,
   },
   statsContainer: {
     flexDirection: "row",
@@ -295,7 +362,7 @@ const styles = StyleSheet.create({
   },
   diseaseGrid: {
     paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingBottom: 5,
   },
   diseaseCard: {
     marginBottom: 12,
@@ -408,6 +475,50 @@ const styles = StyleSheet.create({
     color: "#999",
     lineHeight: 18,
   },
+  alertBannerSection: {
+    marginHorizontal: 16,
+    marginBottom: 24,
+  },
+  alertBanner: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderLeftWidth: 4,
+  },
+  alertHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    gap: 8,
+  },
+  alertTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    flex: 1,
+  },
+  alertTimestamp: {
+    fontSize: 12,
+    color: "#999",
+    marginTop: 6,
+    marginLeft: 32,
+    fontWeight: "400",
+  },
+  alertDescription: {
+    fontSize: 13,
+    color: "#666",
+    lineHeight: 18,
+    marginLeft: 32,
+    marginTop: 8,
+  },
+  noAlertContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  noAlertText: {
+    fontSize: 14,
+    color: "#34C759",
+    fontWeight: "500",
+  },
   closeButton: {
     marginHorizontal: 16,
     marginTop: 12,
@@ -420,5 +531,24 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  footerSection: {
+    alignItems: "center",
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#E8E8E8",
+    marginTop: 25,
+  },
+  footerText: {
+    fontSize: 13,
+    color: "#666",
+    marginTop: 8,
+  },
+  universityName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#007AFF",
+    marginTop: 4,
   },
 });
